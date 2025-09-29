@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
 import { subjects } from "@/constants"
+import { createCompanion } from "@/lib/actions/companion.actions"
+import { redirect } from "next/navigation"
 
 const formSchema = z.object({
     name: z.string().min(1, { error: "Name is required." }),
@@ -50,8 +52,16 @@ const CompanionForm = () => {
     })
 
     // eventhandler
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         console.log(values)
+        const companion = await createCompanion(values);
+
+        if (companion) {
+            redirect(`/companions/${companion.id}`)
+        } else {
+            console.log("Error creating companion")
+            redirect("/")
+        }
     }
 
     return (
